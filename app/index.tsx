@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, TextInput, TouchableOpacity, Text } from 'react-native';
 import { router } from 'expo-router';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { auth } from '../firebase/config';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-
-GoogleSignin.configure({
-  webClientId: 'YOUR_WEB_CLIENT_ID', // Replace with your web client ID
-});
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -18,20 +13,15 @@ export default function LoginScreen() {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       if (userCredential.user) {
-        router.replace('/(admin)/dashboard');
+        router.replace('/(admin)/dashboard' as any);
       }
     } catch (error: any) {
       alert(error.message);
     }
   };
 
-  const handleClientLogin = async () => {
-    try {
-      const { idToken } = await GoogleSignin.signIn();
-      router.replace('/(client)/appointments');
-    } catch (error: any) {
-      alert(error.message);
-    }
+  const handleClientLogin = () => {
+    router.replace('/(client)/appointments');
   };
 
   return (
@@ -73,8 +63,8 @@ export default function LoginScreen() {
         </View>
       ) : (
         <View style={styles.formContainer}>
-          <TouchableOpacity style={styles.googleButton} onPress={handleClientLogin}>
-            <Text style={styles.buttonText}>Continue with Google</Text>
+          <TouchableOpacity style={styles.loginButton} onPress={handleClientLogin}>
+            <Text style={styles.buttonText}>Continue as Guest</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -145,12 +135,6 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     backgroundColor: '#4A90E2',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  googleButton: {
-    backgroundColor: '#DB4437',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
